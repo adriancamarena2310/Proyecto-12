@@ -1,8 +1,8 @@
-import { Injectable, computed, inject, signal } from "@angular/core";
-import { User, UsersResponse } from "../interfaces/req-response";
-import { delay } from "rxjs";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient } from '@angular/common/http';
+import { Injectable, computed, inject, signal } from '@angular/core';
 
+import { delay, map } from 'rxjs';
+import { User, UserResponse, UsersResponse } from '../interfaces/req-response';
 
 
 interface State {
@@ -20,22 +20,37 @@ export class UsersService {
 
   #state = signal<State>({
     loading: true,
-    users: [],});
+    users: [],
+  });
 
-    public users = computed( () => this.#state().users );
-    public loading = computed( () => this.#state().loading );
+  public users = computed( () => this.#state().users );
+  public loading = computed( () => this.#state().loading );
 
-    constructor(){
-      this.http.get<UsersResponse>('https://reqres.in/api/users')
-    .pipe( delay(1500) )
-    .subscribe( res => {
 
-      this.#state.set({
-        loading: false,
-        users: res.data,
-      })
 
-    });
+  constructor() {
 
-    }
+    this.http.get<UsersResponse>('https://reqres.in/api/users')
+      .pipe( delay(1500) )
+      .subscribe( res => {
+
+        this.#state.set({
+          loading: false,
+          users: res.data,
+        })
+
+      });
+
+  }
+
+  getUserById( id: string ) {
+    return this.http.get<UserResponse>(`https://reqres.in/api/users/${ id }`)
+      .pipe(
+        delay(1500),
+        map( resp => resp.data )
+      )
+
+  }
+
+
 }
