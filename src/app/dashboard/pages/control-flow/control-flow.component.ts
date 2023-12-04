@@ -18,4 +18,7 @@ export default class ControlFlowComponent {
     this.showContent.update( value => !value );
 
   }
+
+  public frameworks = signal(['Angular','Vue','Svelte','Qwik','React']);
+  public frameworks2 = signal([]);
 }
